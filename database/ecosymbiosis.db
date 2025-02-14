@@ -1,0 +1,60 @@
+-- Create the Industry table
+CREATE TABLE Industry (
+    industry_id INTEGER PRIMARY KEY UNIQUE,
+    industry_name TEXT NOT NULL,
+    industry_type TEXT CHECK (industry_type IN ('Manufacturing Unit', 'Recycling Plant', 'Landfill')) NOT NULL,
+    contact_number TEXT NOT NULL,
+    latitude REAL NOT NULL,
+    longitude REAL NOT NULL,
+    password_hash TEXT NOT NULL
+);
+
+-- Create the Product table
+CREATE TABLE Product (
+    product_id INTEGER PRIMARY KEY UNIQUE,
+    product_name TEXT NOT NULL,
+    quantity INTEGER CHECK (quantity > 0) NOT NULL,
+    price_per_unit REAL CHECK (price_per_unit > 0) NOT NULL,
+    producing_industry_id INTEGER,
+    FOREIGN KEY (producing_industry_id) REFERENCES Industry(industry_id) ON DELETE CASCADE NOT NULL
+);
+
+-- Create the Transaction table
+CREATE TABLE Transaction (
+    consignment_id INTEGER PRIMARY KEY UNIQUE,
+    producing_industry_id INTEGER,
+    consuming_industry_id INTEGER,
+    quantity_purchased INTEGER CHECK (quantity_purchased > 0) NOT NULL,
+    price_per_unit REAL NOT NULL,
+    FOREIGN KEY (producing_industry_id) REFERENCES Industry(industry_id) ON DELETE CASCADE NOT NULL,
+    FOREIGN KEY (consuming_industry_id) REFERENCES Industry(industry_id) ON DELETE CASCADE NOT NULL
+);
+
+-- Sample data for Industry table
+INSERT INTO Industry (industry_id, industry_name, industry_type, contact_number, latitude, longitude, password_hash) VALUES
+(1, 'Eco Plastics', 'Manufacturing Unit', '123-456-7890', 34.0522, -118.2437, 'hashed_password_1'),
+(2, 'Green Recycling', 'Recycling Plant', '234-567-8901', 36.1699, -115.1398, 'hashed_password_2'),
+(3, 'Waste Management Co.', 'Landfill', '345-678-9012', 40.7128, -74.0060, 'hashed_password_3'),
+(4, 'Renewable Resources', 'Manufacturing Unit', '456-789-0123', 37.7749, -122.4194, 'hashed_password_4'),
+(5, 'Eco-Friendly Solutions', 'Recycling Plant', '567-890-1234', 41.8781, -87.6298, 'hashed_password_5');
+
+-- Sample data for Product table
+INSERT INTO Product (product_id, product_name, quantity, price_per_unit, producing_industry_id) VALUES
+(1, 'Recycled Plastic', 100, 1.50, 1),
+(2, 'Eco Paper', 200, 0.75, 2),
+(3, 'Compost', 150, 2.00, 3),
+(4, 'Biodegradable Bags', 300, 0.50, 4),
+(5, 'Recycled Glass', 250, 1.25, 2),
+(6, 'Organic Fertilizer', 100, 3.00, 5),
+(7, 'Recycled Metal', 400, 2.50, 1),
+(8, 'Eco-Friendly Paint', 50, 15.00, 4),
+(9, 'Sustainable Wood', 80, 10.00, 3),
+(10, 'Green Energy Solutions', 60, 20.00, 5);
+
+-- Sample data for Transaction table
+INSERT INTO Transaction (consignment_id, producing_industry_id, consuming_industry_id, quantity_purchased, price_per_unit) VALUES
+(1, 1, 2, 50, 1.50),
+(2, 2, 3, 100, 0.75),
+(3, 3, 4, 30, 2.00),
+(4, 4, 5, 20, 0.50),
+(5, 5, 1, 10, 3.00);
